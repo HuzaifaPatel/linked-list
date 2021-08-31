@@ -3,9 +3,9 @@
 #include "LinkedList.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(){
-	LinkedList* ll = initLinkedList();
 }
 
 LinkedList* initLinkedList(){
@@ -22,16 +22,25 @@ LinkedList* initLinkedList(){
 
 int push(LinkedList** linkedList, void* data){
 	struct Node* newNode = malloc(sizeof(struct Node));
-
+	
 	if(newNode == NULL){
 		return 1;
 	}
 
+	struct Node* tempNode = (*linkedList)->node;
 	newNode->data = data;
-	(*linkedList)->node = newNode;
+	
+	if(!getSize(*linkedList)){
+		(*linkedList)->node = newNode;
+	}else{
+		for(int i = 1; i < getSize(*linkedList); i++){
+			tempNode = tempNode->next;
+		}
+		tempNode->next = newNode;
+	}
+
 	newNode->next = NULL;
 	(*linkedList)->size++;
-
 	return 0;
 }
 
@@ -144,13 +153,43 @@ int getSize(LinkedList* linkedList){
 	return linkedList->size;
 }
 
-// void reverse(){
+void reverse(LinkedList** linkedList){
 
-// }
+}
 
-// void shuffle(){
-	
-// } // based on RNG
+void shuffle(LinkedList** linkedList){
+	srand((unsigned) time(NULL));
+	int limit = (getSize(*linkedList) * (getSize(*linkedList) + 1)) / 2;
+	int counter = 0;
+	struct Node* holder[getSize(*linkedList)];
+
+	struct Node* tempNode = (*linkedList)->node;
+
+	for(int i = 0; i < getSize(*linkedList); i++){
+		holder[i] = tempNode;
+		tempNode = tempNode->next;
+	}
+
+	while(counter <= limit){
+		int rngOne = rand() % getSize(*linkedList);
+		int rngTwo = rand() % getSize(*linkedList);
+		struct Node* holderNode =  holder[rngOne];
+
+		holder[rngOne] = holder[rngTwo];
+		holder[rngTwo] = holderNode;
+		counter += rngOne + rngTwo;
+	}
+
+	for(int i = 0; i < getSize(*linkedList); i++){
+		if(i == getSize(*linkedList) - 1){
+			holder[getSize(*linkedList) - 1]->next = NULL;
+			break;
+		}
+		holder[i]->next = holder[i+1];
+	}
+
+	(*linkedList)->node = holder[0];
+}
 
 int clear(LinkedList** linkedList){
 	struct Node* tempNodeOne = (*linkedList)->node;
