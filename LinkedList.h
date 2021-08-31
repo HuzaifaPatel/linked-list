@@ -10,7 +10,6 @@ typedef struct LinkedList{
 	int size;
 } LinkedList;
 
-// struct Node* initNode();
 LinkedList* initLinkedList();
 int push(LinkedList** linkedList, void* data);
 int addNode(LinkedList** linkedList, void* data, int index);
